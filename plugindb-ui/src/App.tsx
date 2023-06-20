@@ -3,6 +3,7 @@ import "./App.css";
 import Header from "./components/Header";
 import Plugins, { pluginPageName } from "./pages/Plugins";
 import Samples, { samplePageName } from "./pages/Samples";
+import { Toaster } from 'react-hot-toast';
 
 const pages = [
   {
@@ -18,11 +19,9 @@ const pages = [
 ];
 
 function App() {
-  const [page, setPage] = useState(pages.find((p) => p.name === "Plugins"));
+  const [page, setPage] = useState(pages[0]);
 
-  const changePage = (page, props = {}) => {
-    console.log("Hi");
-
+  const changePage = (page: string, props = {}) => {
     const selectedPage = pages.find((p) => p.name === page);
 
     if (selectedPage === null || selectedPage === undefined) {
@@ -48,6 +47,8 @@ function App() {
       />
 
       {React.createElement(page.component, page.props)}
+
+      <Toaster/>      
     </div>
   );
 }
