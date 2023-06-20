@@ -13,6 +13,21 @@ function createWindow() {
     },
   });
 
+  win.webContents.session.webRequest.onBeforeSendHeaders(
+    (details, callback) => {
+      callback({ requestHeaders: { Origin: "*", ...details.requestHeaders } });
+    }
+  );
+
+  win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        "Access-Control-Allow-Origin": ["*"],
+        ...details.responseHeaders,
+      },
+    });
+  });
+
   // and load the index.html of the app.
   // win.loadFile("index.html");
   win.loadURL(

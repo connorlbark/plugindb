@@ -1,98 +1,66 @@
 import React, { useEffect } from 'react';
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
 
 import {
-  MusicPlugin
+  MusicPlugin, Tag
 } from '../../types';
 import { PluginAPI } from '../../utils/service';
 
-const columnHelper = createColumnHelper<MusicPlugin>();
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { TagChip } from '../TagChip';
 
-const columns = [
-  columnHelper.accessor(row => row.name, {
-    id: 'name',
-    cell: info => <i>{info.getValue()}</i>,
-    header: () => <span>Plugin</span>,
-  }),
-]
 
-export const PluginTable = (props) => {
+
+export const PluginTable = () => {
   const [data, setData] = React.useState<MusicPlugin[]>([]);
-  const rerender = React.useReducer(() => ({}), {})[1]
 
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
-  useEffect(() => {
+  const init = () => {
     PluginAPI.getAll().then((plugins) => {
       setData(plugins);
-    }).catch(() => {
-      alert("Could not access API.");
+    }).catch((e) => {
+      alert("Could not access API: " + e);
     });
-  });
+  }
+
+  const columns: GridColDef[] = [
+    { field: 'plugin_id', headerName: 'Plugin ID', width: 70 },
+    { field: 'name', headerName: 'Plugin', width: 130 },
+    { field: 'developer', headerName: 'Developer', width: 130 },
+    { field: 'version', headerName: 'Version', width: 70},
+    { 
+      field: 'tags',
+      headerName: 'Tags',
+      width: 300,
+      renderCell: (params) => {
+        return <div style={{overflow: 'scroll'}}>
+          {params.row.tags.map((tag: Tag) => {
+            return <TagChip key={tag.tag} tag={tag}/>
+          })}
+        </div>
+      }
+    }
+  ];
+
+  useEffect(() => {
+    init();
+  }, []);
 
 
-  return (
-    <div className="p-2">
-      <table>
-        <thead>
-          {table.getHeaderGroups().map(headerGroup => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map(header => (
-                <th key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map(row => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map(cell => (
-                <td key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          {table.getFooterGroups().map(footerGroup => (
-            <tr key={footerGroup.id}>
-              {footerGroup.headers.map(header => (
-                <th key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.footer,
-                        header.getContext()
-                      )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </tfoot>
-      </table>
-      <div className="h-4" />
-      <button onClick={() => rerender()} className="border p-2">
-        Rerender
-      </button>
-    </div>
-  )
+    return (
+      <div style={{ height: 400, width: '100%' }}>
+        <DataGrid
+          rows={data}
+          columns={columns}
+          getRowId={(row) => row.plugin_id}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 5 },
+            },
+          }}
+          pageSizeOptions={[5, 10]}
+          
+        />
+      </div>
+    );
 
 };
 

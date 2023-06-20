@@ -1,7 +1,7 @@
 import React from "react";
 export const samplePageName = "Samples";
 
-export const Samples = (props) => {
+export const Samples = () => {
 
   return (
     <div></div>

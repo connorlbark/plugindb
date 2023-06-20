@@ -3,7 +3,8 @@ import "./App.css";
 import Header from "./components/Header";
 import Plugins, { pluginPageName } from "./pages/Plugins";
 import Samples, { samplePageName } from "./pages/Samples";
-import { Toaster } from 'react-hot-toast';
+import { createPluginPageName } from "./pages/CreatePlugin";
+import PluginForm from "./components/forms/PluginForm";
 
 const pages = [
   {
@@ -16,12 +17,17 @@ const pages = [
     component: Samples,
     props: {},
   },
+  {
+    name: createPluginPageName,
+    component: PluginForm,
+    props: {},
+  },
 ];
 
 function App() {
   const [page, setPage] = useState(pages[0]);
 
-  const changePage = (page: string, props = {}) => {
+  const redirect = (page: string, props = {}) => {
     const selectedPage = pages.find((p) => p.name === page);
 
     if (selectedPage === null || selectedPage === undefined) {
@@ -43,12 +49,10 @@ function App() {
       <Header
         currentPageName={page.name}
         pageNames={pages.map((page) => page.name)}
-        changePage={changePage}
+        changePage={redirect}
       />
 
-      {React.createElement(page.component, page.props)}
-
-      <Toaster/>      
+      {React.createElement(page.component, {...page.props, ...{redirect: redirect}})}
     </div>
   );
 }

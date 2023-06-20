@@ -3,7 +3,7 @@ import PluginTable from "../components/tables/PluginTable";
 
 export const pluginPageName = "Plugins";
 
-export const Plugins = (props) => {
+export const Plugins = () => {
   return <PluginTable></PluginTable>;
 };
 
