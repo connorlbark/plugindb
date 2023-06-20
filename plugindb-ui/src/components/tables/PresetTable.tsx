@@ -1,37 +1,47 @@
 import React, { useEffect } from 'react';
 
 import {
-  MusicPlugin, Tag
+  Preset, Tag
 } from '../../types';
-import { PluginAPI } from '../../utils/service';
+import { PresetAPI } from '../../utils/service';
 
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { TagChip } from '../TagChip';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import { createPluginPageName } from '../../pages/CreatePlugin';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { pluginPageName } from '../../pages/Plugins';
+//import { createPresetPageName } from '../../pages/CreatePreset';
 
-export const PluginTable = (props: {redirect: (page: string, props?: {}) => void}) => {
-  const [data, setData] = React.useState<MusicPlugin[]>([]);
+
+export const PresetTable = (props: {redirect: (page: string, props?: {}) => void}) => {
+  const [data, setData] = React.useState<Preset[]>([]);
 
   const init = () => {
-    PluginAPI.getAll().then((plugins) => {
-      setData(plugins);
+    PresetAPI.getAll().then((presets) => {
+      setData(presets);
     }).catch((e) => {
       alert("Could not access API: " + e);
     });
   }
 
   const columns: GridColDef[] = [
-    { field: 'plugin_id', headerName: 'Plugin ID', width: 70 },
-    { field: 'name', headerName: 'Plugin', width: 130 },
-    { field: 'developer', headerName: 'Developer', width: 130 },
-    { field: 'version', headerName: 'Version', width: 70},
+    { field: 'preset_id', headerName: 'Preset ID', width: 100 },
+    { field: 'name', headerName: 'Name', width: 140 },
+    { field: 'plugin_name', headerName: 'Plugin', width: 140 },
+    {
+      field: 'filepath', 
+      headerName: 'File', 
+      width: 130,
+      renderCell: (params) => {
+        return (
+          <div>
+            {params.value?.split('/').slice(-1)}
+          </div>
+        )
+      }
+    },
     { 
       field: 'tags',
       headerName: 'Tags',
-      width: 300,
+      width: 200,
       valueGetter: (params) => {
         return params.row.tags.map((t: Tag) => t.tag).join(', ');
       },
@@ -48,11 +58,8 @@ export const PluginTable = (props: {redirect: (page: string, props?: {}) => void
       renderCell: (params) => {
         return (
           <div>
-            <button className="button-link" onClick={() => {props.redirect(createPluginPageName, { initialPlugin: params.row })}}>
+            <button className="button-link">
               <ModeEditIcon />
-            </button>
-            <button className="button-link" onClick={async () => {await PluginAPI.delete(params.row.plugin_id); init()}}>
-              <DeleteIcon />
             </button>
           </div>
         );
@@ -72,7 +79,7 @@ export const PluginTable = (props: {redirect: (page: string, props?: {}) => void
       <DataGrid
         rows={data}
         columns={columns}
-        getRowId={(row) => row.plugin_id}
+        getRowId={(row) => row.preset_id}
         initialState={{
           pagination: {
             paginationModel: { page: 0, pageSize: 5 },
@@ -86,4 +93,4 @@ export const PluginTable = (props: {redirect: (page: string, props?: {}) => void
 
 };
 
-export default PluginTable;
+export default PresetTable;

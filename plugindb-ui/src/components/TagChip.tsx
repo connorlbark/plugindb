@@ -26,7 +26,7 @@ const textColorFromBgColor = (bgColor: string) => {
 
 }
 
-export const TagChip = (props: {tag: Tag}) => {
+export const TagChip = (props: {tag: Tag, onDelete?: () => void}) => {
   return (
     <Chip
       label={props.tag.tag}
@@ -35,6 +35,7 @@ export const TagChip = (props: {tag: Tag}) => {
           backgroundColor: props.tag.color || "#ffffff",
           color: textColorFromBgColor(props.tag.color || "#ffffff")
         }
-      } />)
+      }
+      onDelete={props.onDelete}/>)
 }
 

@@ -3,8 +3,10 @@ import "./App.css";
 import Header from "./components/Header";
 import Plugins, { pluginPageName } from "./pages/Plugins";
 import Samples, { samplePageName } from "./pages/Samples";
+import Presets, { presetPageName } from "./pages/Presets";
 import { createPluginPageName } from "./pages/CreatePlugin";
 import PluginForm from "./components/forms/PluginForm";
+import Tags, { tagPageName } from "./pages/Tags";
 
 const pages = [
   {
@@ -13,8 +15,18 @@ const pages = [
     props: {},
   },
   {
+    name: presetPageName,
+    component: Presets,
+    props: {},
+  },
+  {
     name: samplePageName,
     component: Samples,
+    props: {},
+  },
+  {
+    name: tagPageName,
+    component: Tags,
     props: {},
   },
   {
