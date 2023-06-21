@@ -9,6 +9,7 @@ import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 //import { createSamplePageName } from '../../pages/CreateSample';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { samplePackFormPageName } from '../../pages/SamplePackForm';
 
 export const SamplePackTable = (props: {redirect: (page: string, props?: {}) => void}) => {
   const [data, setData] = React.useState<SamplePack[]>([]);
@@ -46,7 +47,7 @@ export const SamplePackTable = (props: {redirect: (page: string, props?: {}) => 
       renderCell: (params) => {
         return (
           <div>
-            <button className="button-link">
+            <button className="button-link" onClick={async () => {props.redirect(samplePackFormPageName, { initialSamplePack: params.row })}}>
               <ModeEditIcon />
             </button>
             <button className="button-link" onClick={async () => {await SamplePackAPI.delete(params.row.sample_pack_id); init()}}>
@@ -66,14 +67,14 @@ export const SamplePackTable = (props: {redirect: (page: string, props?: {}) => 
   }, []);
 
   return (
-    <div style={{ height: 483, width: '100%' }}>
+    <div style={{ height: 667, width: '100%' }}>
       <DataGrid
         rows={data}
         columns={columns}
         getRowId={(row) => row.sample_pack_id}
         initialState={{
           pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
+            paginationModel: { page: 0, pageSize: 10 },
           },
         }}
         pageSizeOptions={[5, 10]}       

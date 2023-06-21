@@ -32,6 +32,9 @@ export const TagAPI = {
   delete: async (tag: string) => {
     await axios.delete(backend + "/tag/"+tag);
   },
+  upsert: async (tag: Tag) => {
+    await axios.put(backend + "/tag", tag);
+  }
 }
 
 export const SampleAPI = {

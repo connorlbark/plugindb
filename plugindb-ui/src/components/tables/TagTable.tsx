@@ -7,9 +7,8 @@ import { TagAPI } from '../../utils/service';
 
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
-//import { createTagPageName } from '../../pages/CreateTag';
 import DeleteIcon from '@mui/icons-material/Delete';
-//import { tagPageName } from '../../pages/Tags';
+import { tagFormPageName } from '../../pages/TagForm';
 
 export const TagTable = (props: {redirect: (page: string, props?: {}) => void}) => {
   const [data, setData] = React.useState<Tag[]>([]);
@@ -39,7 +38,7 @@ export const TagTable = (props: {redirect: (page: string, props?: {}) => void}) 
       renderCell: (params) => {
         return (
           <div>
-            <button className="button-link" onClick={() => {}}>
+            <button className="button-link" onClick={() => {props.redirect(tagFormPageName, { initialTag: params.row })}}>
               <ModeEditIcon />
             </button>
             <button className="button-link" onClick={async () => {await TagAPI.delete(params.row.tag); init()}}>
@@ -59,14 +58,14 @@ export const TagTable = (props: {redirect: (page: string, props?: {}) => void}) 
   }, []);
 
   return (
-    <div style={{ height: 483, width: '100%' }}>
+    <div style={{ height: 667, width: '100%' }}>
       <DataGrid
         rows={data}
         columns={columns}
         getRowId={(row) => row.tag}
         initialState={{
           pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
+            paginationModel: { page: 0, pageSize: 10 },
           },
         }}
         pageSizeOptions={[5, 10]}       

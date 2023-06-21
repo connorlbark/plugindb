@@ -8,7 +8,7 @@ import { PluginAPI } from '../../utils/service';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { TagChip } from '../TagChip';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import { createPluginPageName } from '../../pages/CreatePlugin';
+import { pluginFormPageName } from '../../pages/PluginForm';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { pluginPageName } from '../../pages/Plugins';
 
@@ -47,7 +47,7 @@ export const PluginTable = (props: {redirect: (page: string, props?: {}) => void
       renderCell: (params) => {
         return (
           <div>
-            <button className="button-link" onClick={() => {props.redirect(createPluginPageName, { initialPlugin: params.row })}}>
+            <button className="button-link" onClick={() => {props.redirect(pluginFormPageName, { initialPlugin: params.row })}}>
               <ModeEditIcon />
             </button>
             <button className="button-link" onClick={async () => {await PluginAPI.delete(params.row.plugin_id); init()}}>
@@ -67,14 +67,14 @@ export const PluginTable = (props: {redirect: (page: string, props?: {}) => void
   }, []);
 
   return (
-    <div style={{ height: 483, width: '100%' }}>
+    <div style={{ height: 667, width: '100%' }}>
       <DataGrid
         rows={data}
         columns={columns}
         getRowId={(row) => row.plugin_id}
         initialState={{
           pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
+            paginationModel: { page: 0, pageSize: 10 },
           },
         }}
         pageSizeOptions={[5, 10]}       

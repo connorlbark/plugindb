@@ -14,8 +14,8 @@ export type MusicPlugin = {
 
 export type Sample = {
   sample_id?: number
-  filename: string
   filepath: string
+  description?: string
   sample_pack_id?: number
   sample_pack_name?: string
   sample_pack_description?: string
@@ -26,10 +26,10 @@ export type Sample = {
 
 export type SamplePack = {
   sample_pack_id?: number
-  sample_pack_name: string
-  sample_pack_description?: string
-  sample_pack_url?: string
-  sample_pack_license?: string
+  name: string
+  description?: string
+  url?: string
+  license?: string
 }
 
 export type Preset = {

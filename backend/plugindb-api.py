@@ -47,7 +47,7 @@ def reduce_plugin(plugin_rows):
 
     for plugin_row in plugin_rows:
         if plugin_row['tag'] != None:
-            plugin['tags'].append(
+            plugin.get('tags').append(
                 {"tag": plugin_row['tag'], "color": plugin_row['tag_color']})
 
     return plugin
@@ -57,6 +57,7 @@ def map_sample(sample_row):
     return {
         "sample_id": sample_row['sample_id'],
         "filepath": sample_row['filepath'],
+        "description": sample_row['description'],
         "sample_pack_id": sample_row['sample_pack_id'],
         "sample_pack_name": sample_row['sample_pack_name'],
         "sample_pack_description": sample_row['sample_pack_description'],
@@ -71,7 +72,7 @@ def reduce_sample(sample_rows):
 
     for sample_row in sample_rows:
         if sample_row['tag'] != None:
-            sample['tags'].append(
+            sample.get('tags').append(
                 {"tag": sample_row['tag'], "color": sample_row['tag_color']})
 
     return sample
@@ -93,7 +94,7 @@ def reduce_preset(preset_rows):
 
     for preset_row in preset_rows:
         if preset_row['tag'] != None:
-            preset['tags'].append(
+            preset.get('tags').append(
                 {"tag": preset_row['tag'], "color": preset_row['tag_color']})
 
     return preset
@@ -264,8 +265,89 @@ def create_plugin():
         if (id == None):
             return "Could not create", 400
 
-        for tag in new_plugin['tags']:
+        for tag in new_plugin.get('tags'):
             cur.callproc('tagPlugin', (new_plugin['name'], tag['tag']))
+
+        cur.close()
+        cnx.commit()
+        return "Created", 200
+    except pymysql.Error as e:
+        cnx.rollback()
+        return "Database error", 500
+
+
+@app.route('/sample', methods=['POST'])
+def create_sample():
+    new_sample = request.json
+
+    try:
+        cur = cnx.cursor()
+
+        if (new_sample.get('sample_pack_name') == ''):
+            new_sample['sample_pack_name'] = None
+
+        cur.callproc(
+            'createSample', (new_sample.get('sample_pack_name'), new_sample['filepath'], new_sample.get('description')))
+
+        id = cur.fetchone()
+
+        if (id == None):
+            return "Could not create", 400
+
+        for tag in new_sample.get('tags'):
+            cur.callproc('tagSample', (new_sample['filepath'], tag['tag']))
+
+        cur.close()
+        cnx.commit()
+        return "Created", 200
+    except pymysql.Error as e:
+        print(e)
+        cnx.rollback()
+        return "Database error", 500
+
+
+@app.route('/preset', methods=['POST'])
+def create_preset():
+    new_preset = request.json
+
+    try:
+        cur = cnx.cursor()
+
+        cur.callproc(
+            'createPreset', (new_preset.get('plugin_name'), new_preset.get('name'), new_preset.get('filepath')))
+
+        id = cur.fetchone()
+
+        if (id == None):
+            return "Could not create", 400
+
+        for tag in new_preset.get('tags'):
+            cur.callproc(
+                'tagPreset', (new_preset['plugin_name'], new_preset['name'], tag['tag']))
+
+        cur.close()
+        cnx.commit()
+        return "Created", 200
+    except pymysql.Error as e:
+        print(e)
+        cnx.rollback()
+        return "Database error", 500
+
+
+@app.route('/sample_pack', methods=['POST'])
+def create_sample_pack():
+    new_sample_pack = request.json
+
+    try:
+        cur = cnx.cursor()
+
+        cur.callproc(
+            'createSamplePack', (new_sample_pack.get('name'), new_sample_pack.get('description'), new_sample_pack.get('url'), new_sample_pack.get('license')))
+
+        id = cur.fetchone()
+
+        if (id == None):
+            return "Could not create", 400
 
         cur.close()
         cnx.commit()
@@ -287,8 +369,97 @@ def update_plugin():
 
         cur.callproc('clearPluginTags', (new_plugin['name'],))
 
-        for tag in new_plugin['tags']:
+        for tag in new_plugin.get('tags'):
             cur.callproc('tagPlugin', (new_plugin['name'], tag['tag']))
+
+        cur.close()
+        cnx.commit()
+
+        return "Updated", 200
+    except pymysql.Error as e:
+        cnx.rollback()
+        return "Database error", 500
+
+
+@app.route('/sample', methods=['PUT'])
+def update_sample():
+    new_sample = request.json
+
+    try:
+        cur = cnx.cursor()
+
+        cur.callproc(
+            'updateSample', (new_sample['filepath'], new_sample.get('sample_pack_name'),  new_sample.get('description')))
+
+        cur.callproc('clearSampleTags', (new_sample['filepath'],))
+
+        for tag in new_sample.get('tags'):
+            cur.callproc('tagSample', (new_sample['filepath'], tag['tag']))
+
+        cur.close()
+        cnx.commit()
+
+        return "Updated", 200
+    except pymysql.Error as e:
+        print(e)
+        cnx.rollback()
+        return "Database error", 500
+
+
+@app.route('/sample_pack', methods=['PUT'])
+def update_sample_pack():
+    new_sample_pack = request.json
+
+    try:
+        cur = cnx.cursor()
+
+        cur.callproc(
+            'updateSamplePack', (new_sample_pack.get('name'), new_sample_pack.get('description'), new_sample_pack.get('url'), new_sample_pack.get('license')))
+
+        cur.close()
+        cnx.commit()
+
+        return "Updated", 200
+    except pymysql.Error as e:
+        print(e)
+        cnx.rollback()
+        return "Database error", 500
+
+
+@app.route('/preset', methods=['PUT'])
+def update_preset():
+    new_preset = request.json
+
+    try:
+        cur = cnx.cursor()
+
+        cur.callproc(
+            'updatePreset', (new_preset.get('plugin_name'), new_preset.get('name'), new_preset.get('filepath')))
+
+        cur.callproc('clearPresetTags', (new_preset['name'],))
+
+        for tag in new_preset.get('tags'):
+            cur.callproc(
+                'tagPreset', (new_preset['plugin_name'], new_preset['name'], tag['tag']))
+
+        cur.close()
+        cnx.commit()
+        return "Created", 200
+    except pymysql.Error as e:
+        print(e)
+        cnx.rollback()
+        return "Database error", 500
+
+
+@app.route('/tag', methods=['PUT'])
+def upsert_tag():
+    tag = request.json
+
+    try:
+        cur = cnx.cursor()
+
+        cur.callproc(
+            'createTag', (tag['tag'], tag['color']))
 
         cur.close()
         cnx.commit()

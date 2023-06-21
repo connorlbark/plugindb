@@ -5,9 +5,12 @@ import Plugins, { pluginPageName } from "./pages/Plugins";
 import Samples, { samplePageName } from "./pages/Samples";
 import SamplePacks, { samplePackPageName } from "./pages/SamplePacks";
 import Presets, { presetPageName } from "./pages/Presets";
-import { createPluginPageName } from "./pages/CreatePlugin";
-import PluginForm from "./components/forms/PluginForm";
+import PluginFormPage, { pluginFormPageName } from "./pages/PluginForm";
 import Tags, { tagPageName } from "./pages/Tags";
+import TagFormPage, { tagFormPageName } from "./pages/TagForm";
+import SampleFormPage, { sampleFormPageName } from "./pages/SampleForm";
+import SamplePackFormPage, { samplePackFormPageName } from "./pages/SamplePackForm";
+import PresetFormPage, { presetFormPageName } from "./pages/PresetForm";
 
 const pages = [
   {
@@ -36,8 +39,28 @@ const pages = [
     props: {},
   },
   {
-    name: createPluginPageName,
-    component: PluginForm,
+    name: pluginFormPageName,
+    component: PluginFormPage,
+    props: {},
+  },
+  {
+    name: presetFormPageName,
+    component: PresetFormPage,
+    props: {},
+  },
+  {
+    name: sampleFormPageName,
+    component: SampleFormPage,
+    props: {},
+  },
+  {
+    name: samplePackFormPageName,
+    component: SamplePackFormPage,
+    props: {},
+  },
+  {
+    name: tagFormPageName,
+    component: TagFormPage,
     props: {},
   },
 ];

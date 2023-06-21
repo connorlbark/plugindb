@@ -56,6 +56,7 @@ export const SampleTable = (props: {redirect: (page: string, props?: {}) => void
         )
       }
     },
+    { field: 'description', headerName: 'Description', width: 150 },
     { 
       field: 'tags',
       headerName: 'Tags',
@@ -114,14 +115,14 @@ export const SampleTable = (props: {redirect: (page: string, props?: {}) => void
   }, []);
 
   return (
-    <div style={{ height: 483, width: '100%' }}>
+    <div style={{ height: 667, width: '100%' }}>
       <DataGrid
         rows={data}
         columns={columns}
         getRowId={(row) => row.sample_id}
         initialState={{
           pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
+            paginationModel: { page: 0, pageSize: 10 },
           },
         }}
         pageSizeOptions={[5, 10]}       
