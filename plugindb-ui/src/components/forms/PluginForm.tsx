@@ -12,6 +12,7 @@ export const PluginForm = (props: { initialPlugin?: MusicPlugin | null, redirect
   const [plugin, setPlugin] = useState<MusicPlugin>(props.initialPlugin || {
     name: "",
     developer: "",
+    version: "",
     tags: []
   });
 
@@ -58,6 +59,11 @@ export const PluginForm = (props: { initialPlugin?: MusicPlugin | null, redirect
       <div>
         <InputLabel style={{marginRight: 10}}>Developer</InputLabel>
         <Input type="text" value={plugin.developer} onChange={(e) => updatePlugin({developer: e.target.value, developer_id: null})}/>
+      </div>
+
+      <div>
+        <InputLabel style={{marginRight: 10}}>Version</InputLabel>
+        <Input type="text" value={plugin.version} onChange={(e) => updatePlugin({version: e.target.value})}/>
       </div>
       
       <div style={{ marginBottom: 10 }}>

@@ -24,7 +24,6 @@ export const PluginTable = (props: {redirect: (page: string, props?: {}) => void
   }
 
   const columns: GridColDef[] = [
-    { field: 'plugin_id', headerName: 'Plugin ID', width: 70 },
     { field: 'name', headerName: 'Plugin', width: 130 },
     { field: 'developer', headerName: 'Developer', width: 130 },
     { field: 'version', headerName: 'Version', width: 70},

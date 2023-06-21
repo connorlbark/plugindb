@@ -3,6 +3,7 @@ import "./App.css";
 import Header from "./components/Header";
 import Plugins, { pluginPageName } from "./pages/Plugins";
 import Samples, { samplePageName } from "./pages/Samples";
+import SamplePacks, { samplePackPageName } from "./pages/SamplePacks";
 import Presets, { presetPageName } from "./pages/Presets";
 import { createPluginPageName } from "./pages/CreatePlugin";
 import PluginForm from "./components/forms/PluginForm";
@@ -22,6 +23,11 @@ const pages = [
   {
     name: samplePageName,
     component: Samples,
+    props: {},
+  },
+  {
+    name: samplePackPageName,
+    component: SamplePacks,
     props: {},
   },
   {

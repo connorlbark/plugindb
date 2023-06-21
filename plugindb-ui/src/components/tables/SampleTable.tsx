@@ -9,7 +9,7 @@ import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { TagChip } from '../TagChip';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 //import { createSamplePageName } from '../../pages/CreateSample';
-
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 
 export const SampleTable = (props: {redirect: (page: string, props?: {}) => void}) => {
   const [data, setData] = React.useState<Sample[]>([]);
@@ -22,8 +22,12 @@ export const SampleTable = (props: {redirect: (page: string, props?: {}) => void
     });
   }
 
+  const playAudioFromFile = (filePath: string) => {
+    const audio = new Audio("file://" + filePath);
+    audio.play();
+  }
+
   const columns: GridColDef[] = [
-    { field: 'sample_id', headerName: 'Sample ID', width: 100 },
     {
       field: 'filepath', 
       headerName: 'File', 
@@ -33,6 +37,18 @@ export const SampleTable = (props: {redirect: (page: string, props?: {}) => void
           <div>
             {params.value.split('/').slice(-1)}
           </div>
+        )
+      }
+    },
+    {
+      field: 'audio', 
+      headerName: '', 
+      width: 70,
+      renderCell: (params) => {
+        return (
+          <button className="button-link" onClick={() => playAudioFromFile(params.row.filepath)}>
+            <PlayCircleIcon/>
+          </button>
         )
       }
     },
@@ -68,6 +84,7 @@ export const SampleTable = (props: {redirect: (page: string, props?: {}) => void
         );
       }
     },
+    { field: 'sample_pack_license', headerName: 'Sample Pack License', width: 150 },
     {
       field: "Actions",
       renderCell: (params) => {

@@ -6,7 +6,7 @@ export const Header = (props) => {
   return (
     <div className="header">
       <a className="logo">plugindb</a>
-      <div class="header-right">
+      <div className="header-right">
         {pageNames.map((pageName) => {
           return (
             <a

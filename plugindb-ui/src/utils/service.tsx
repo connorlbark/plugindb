@@ -1,5 +1,5 @@
 import axios from "axios";
-import { MusicPlugin, Tag, Sample, Preset } from "../types";
+import { MusicPlugin, Tag, Sample, Preset, SamplePack } from "../types";
 
 const backend = "http://127.0.0.1:5000";
 
@@ -44,6 +44,19 @@ export const SampleAPI = {
   },
   update: async (sample: Sample) => {
     await axios.put(backend + "/sample", sample);
+  },
+};
+
+export const SamplePackAPI = {
+  getAll: async () : Promise<SamplePack[]> => {
+    const response = await axios.get(backend + "/sample_pack");
+    return response.data;
+  },
+  create: async (pack: SamplePack) => {
+    await axios.post(backend + "/sample_pack", pack);
+  },
+  update: async (pack: SamplePack) => {
+    await axios.put(backend + "/sample_pack", pack);
   },
 };
 

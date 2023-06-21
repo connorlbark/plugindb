@@ -1,57 +1,51 @@
 import React, { useEffect } from 'react';
 
 import {
-  Preset, Tag
+  SamplePack, Tag
 } from '../../types';
-import { PresetAPI } from '../../utils/service';
+import { SamplePackAPI } from '../../utils/service';
 
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { TagChip } from '../TagChip';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
-//import { createPresetPageName } from '../../pages/CreatePreset';
+//import { createSamplePageName } from '../../pages/CreateSample';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 
-
-export const PresetTable = (props: {redirect: (page: string, props?: {}) => void}) => {
-  const [data, setData] = React.useState<Preset[]>([]);
+export const SamplePackTable = (props: {redirect: (page: string, props?: {}) => void}) => {
+  const [data, setData] = React.useState<SamplePack[]>([]);
 
   const init = () => {
-    PresetAPI.getAll().then((presets) => {
-      setData(presets);
+    SamplePackAPI.getAll().then((sample_packs) => {
+      setData(sample_packs);
     }).catch((e) => {
       alert("Could not access API: " + e);
     });
   }
 
+  const playAudioFromFile = (filePath: string) => {
+    const audio = new Audio("file://" + filePath);
+    audio.play();
+  }
+
   const columns: GridColDef[] = [
-    { field: 'name', headerName: 'Name', width: 140 },
-    { field: 'plugin_name', headerName: 'Plugin', width: 140 },
+    { field: 'name', headerName: 'Sample Pack', width: 150 },
+    { field: 'description', headerName: 'Description', width: 400 },
     {
-      field: 'filepath', 
-      headerName: 'File', 
-      width: 130,
-      renderCell: (params) => {
-        return (
-          <div>
-            {params.value?.split('/').slice(-1)}
-          </div>
-        )
-      }
-    },
-    { 
-      field: 'tags',
-      headerName: 'Tags',
+      field: 'url',
+      headerName: 'URL',
       width: 200,
-      valueGetter: (params) => {
-        return params.row.tags.map((t: Tag) => t.tag).join(', ');
-      },
       renderCell: (params) => {
-        return <div style={{overflow: 'scroll', flex: 'row'}} className="tag-chip-row">
-          {params.row.tags.map((tag: Tag) => {
-            return <TagChip key={tag.tag} tag={tag}/>
-          })}
-        </div>
+        
+        return (
+          <button className='button-link' onClick={() => {
+            // TODO: open link
+          }}>
+            {params.value}
+          </button>
+        );
       }
     },
+    { field: 'license', headerName: 'License', width: 150 },
     {
       field: "Actions",
       renderCell: (params) => {
@@ -78,7 +72,7 @@ export const PresetTable = (props: {redirect: (page: string, props?: {}) => void
       <DataGrid
         rows={data}
         columns={columns}
-        getRowId={(row) => row.preset_id}
+        getRowId={(row) => row.sample_pack_id}
         initialState={{
           pagination: {
             paginationModel: { page: 0, pageSize: 5 },
@@ -92,4 +86,4 @@ export const PresetTable = (props: {redirect: (page: string, props?: {}) => void
 
 };
 
-export default PresetTable;
+export default SamplePackTable;

@@ -53,6 +53,52 @@ def reduce_plugin(plugin_rows):
     return plugin
 
 
+def map_sample(sample_row):
+    return {
+        "sample_id": sample_row['sample_id'],
+        "filepath": sample_row['filepath'],
+        "sample_pack_id": sample_row['sample_pack_id'],
+        "sample_pack_name": sample_row['sample_pack_name'],
+        "sample_pack_description": sample_row['sample_pack_description'],
+        "sample_pack_url": sample_row['sample_pack_url'],
+        "sample_pack_license": sample_row['sample_pack_license'],
+    }
+
+
+def reduce_sample(sample_rows):
+    sample = map_sample(sample_rows[0])
+    sample['tags'] = []
+
+    for sample_row in sample_rows:
+        if sample_row['tag'] != None:
+            sample['tags'].append(
+                {"tag": sample_row['tag'], "color": sample_row['tag_color']})
+
+    return sample
+
+
+def map_preset(preset_row):
+    return {
+        "preset_id": preset_row['preset_id'],
+        "name": preset_row['name'],
+        "filepath": preset_row['filepath'],
+        "plugin_id": preset_row['plugin_id'],
+        "plugin_name": preset_row['plugin_name'],
+    }
+
+
+def reduce_preset(preset_rows):
+    preset = map_preset(preset_rows[0])
+    preset['tags'] = []
+
+    for preset_row in preset_rows:
+        if preset_row['tag'] != None:
+            preset['tags'].append(
+                {"tag": preset_row['tag'], "color": preset_row['tag_color']})
+
+    return preset
+
+
 @app.route('/plugin', methods=['GET'])
 @cross_origin(origin='*')
 def get_all_plugins():
@@ -84,22 +130,103 @@ def get_all_plugins():
     return jsonify(list(map(reduce_plugin, plugin_map.values())))
 
 
-@app.route('/sample', methods=['GET'])
-def get_all_samples():
-    plugins = []
+@app.route('/preset', methods=['GET'])
+def get_all_presets():
+    preset_map = {}
     try:
         cur = cnx.cursor()
-        get_all_samples_stmt = "SELECT s.*, sp.name AS sample_pack FROM sample s LEFT JOIN sample_pack sp ON s.sample_pack_id = sp.sample_pack_id"
+        get_all_presets_stmt = """
+        SELECT pr.*, p.name AS plugin_name, t.tag AS tag, t.color AS tag_color
+            FROM preset pr
+            LEFT JOIN plugin p ON pr.plugin_id = p.plugin_id
+            LEFT JOIN preset_tag_map ptm ON ptm.preset_id = pr.preset_id
+            LEFT JOIN tag t ON ptm.tag = t.tag
+        """
 
-        cur.execute(get_all_samples_stmt)
+        cur.execute(get_all_presets_stmt)
 
-        plugins.extend(cur.fetchall())
+        rows = cur.fetchall()
+
+        for row in rows:
+            if row['preset_id'] not in preset_map:
+                preset_map[row['preset_id']] = []
+
+            preset_map[row['preset_id']].append(row)
 
         cur.close()
     except pymysql.Error as e:
         return "Database error", 500
 
-    return jsonify(plugins)
+    return jsonify(list(map(reduce_preset, preset_map.values())))
+
+
+@app.route('/sample', methods=['GET'])
+def get_all_samples():
+    sample_map = {}
+    try:
+        cur = cnx.cursor()
+        get_all_samples_stmt = """
+        SELECT s.*, sp.name AS sample_pack_name, sp.description AS sample_pack_description,
+               sp.url AS sample_pack_url, sp.license AS sample_pack_license, t.tag AS tag, t.color AS tag_color
+            FROM sample s
+            LEFT JOIN sample_pack sp ON s.sample_pack_id = sp.sample_pack_id
+            LEFT JOIN sample_tag_map stm ON stm.sample_id = s.sample_id
+            LEFT JOIN tag t ON stm.tag = t.tag
+        """
+
+        cur.execute(get_all_samples_stmt)
+
+        rows = cur.fetchall()
+
+        for row in rows:
+            if row['sample_id'] not in sample_map:
+                sample_map[row['sample_id']] = []
+
+            sample_map[row['sample_id']].append(row)
+
+        cur.close()
+    except pymysql.Error as e:
+        return "Database error", 500
+
+    return jsonify(list(map(reduce_sample, sample_map.values())))
+
+
+@app.route('/tag', methods=['GET'])
+def get_all_tags():
+    try:
+        cur = cnx.cursor()
+        get_all_tags_stmt = """
+        SELECT * FROM tag
+        """
+
+        cur.execute(get_all_tags_stmt)
+
+        tags = cur.fetchall()
+
+        cur.close()
+
+        return jsonify(tags)
+    except pymysql.Error as e:
+        return "Database error", 500
+
+
+@app.route('/sample_pack', methods=['GET'])
+def get_all_sample_packs():
+    try:
+        cur = cnx.cursor()
+        get_all_packs_stmt = """
+        SELECT * FROM sample_pack
+        """
+
+        cur.execute(get_all_packs_stmt)
+
+        packs = cur.fetchall()
+
+        cur.close()
+
+        return jsonify(packs)
+    except pymysql.Error as e:
+        return "Database error", 500
 
 
 @app.route('/tag/search', methods=['GET'])
@@ -162,6 +289,22 @@ def update_plugin():
 
         for tag in new_plugin['tags']:
             cur.callproc('tagPlugin', (new_plugin['name'], tag['tag']))
+
+        cur.close()
+        cnx.commit()
+
+        return "Updated", 200
+    except pymysql.Error as e:
+        cnx.rollback()
+        return "Database error", 500
+
+
+@app.route('/plugin/<int:plugin_id>', methods=['DELETE'])
+def delete_plugin(plugin_id):
+    try:
+        cur = cnx.cursor()
+
+        cur.execute("DELETE FROM plugin WHERE plugin_id = %s", plugin_id)
 
         cur.close()
         cnx.commit()
