@@ -315,6 +315,72 @@ def delete_plugin(plugin_id):
         return "Database error", 500
 
 
+@app.route('/tag/<tag>', methods=['DELETE'])
+def delete_tag(tag):
+    try:
+        cur = cnx.cursor()
+
+        cur.execute("DELETE FROM tag WHERE tag = %s", tag)
+
+        cur.close()
+        cnx.commit()
+
+        return "Updated", 200
+    except pymysql.Error as e:
+        cnx.rollback()
+        return "Database error", 500
+
+
+@app.route('/sample/<int:sample_id>', methods=['DELETE'])
+def delete_sample(sample_id):
+    try:
+        cur = cnx.cursor()
+
+        cur.execute("DELETE FROM sample WHERE sample_id = %s", sample_id)
+
+        cur.close()
+        cnx.commit()
+
+        return "Updated", 200
+    except pymysql.Error as e:
+        cnx.rollback()
+        return "Database error", 500
+
+
+@app.route('/sample_pack/<int:sample_id>', methods=['DELETE'])
+def delete_sample_pack(sample_id):
+    try:
+        cur = cnx.cursor()
+
+        cur.execute(
+            "DELETE FROM sample_pack WHERE sample_pack_id = %s", sample_id)
+
+        cur.close()
+        cnx.commit()
+
+        return "Updated", 200
+    except pymysql.Error as e:
+        cnx.rollback()
+        return "Database error", 500
+
+
+@app.route('/preset/<int:preset_id>', methods=['DELETE'])
+def delete_preset(preset_id):
+    try:
+        cur = cnx.cursor()
+
+        cur.execute(
+            "DELETE FROM preset WHERE preset_id = %s", preset_id)
+
+        cur.close()
+        cnx.commit()
+
+        return "Updated", 200
+    except pymysql.Error as e:
+        cnx.rollback()
+        return "Database error", 500
+
+
 # TOOD needed:
 # create reducers for tags for samples
 # get all presets for plugin

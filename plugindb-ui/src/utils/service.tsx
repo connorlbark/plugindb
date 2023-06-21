@@ -45,6 +45,9 @@ export const SampleAPI = {
   update: async (sample: Sample) => {
     await axios.put(backend + "/sample", sample);
   },
+  delete: async (sample_id: number) => {
+    await axios.delete(backend + "/sample/"+sample_id);
+  },
 };
 
 export const SamplePackAPI = {
@@ -58,6 +61,9 @@ export const SamplePackAPI = {
   update: async (pack: SamplePack) => {
     await axios.put(backend + "/sample_pack", pack);
   },
+  delete: async (sample_pack_id: number) => {
+    await axios.delete(backend + "/sample_pack/"+sample_pack_id);
+  },
 };
 
 export const PresetAPI = {
@@ -70,5 +76,8 @@ export const PresetAPI = {
   },
   update: async (preset: Preset) => {
     await axios.put(backend + "/preset", preset);
+  },
+  delete: async (preset_id: number) => {
+    await axios.delete(backend + "/preset/"+preset_id);
   },
 };

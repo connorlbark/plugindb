@@ -9,6 +9,7 @@ import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { TagChip } from '../TagChip';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 //import { createPresetPageName } from '../../pages/CreatePreset';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 
 export const PresetTable = (props: {redirect: (page: string, props?: {}) => void}) => {
@@ -59,6 +60,9 @@ export const PresetTable = (props: {redirect: (page: string, props?: {}) => void
           <div>
             <button className="button-link">
               <ModeEditIcon />
+            </button>
+            <button className="button-link" onClick={async () => {await PresetAPI.delete(params.row.preset_id); init()}}>
+              <DeleteIcon />
             </button>
           </div>
         );

@@ -6,10 +6,9 @@ import {
 import { SamplePackAPI } from '../../utils/service';
 
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
-import { TagChip } from '../TagChip';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 //import { createSamplePageName } from '../../pages/CreateSample';
-import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export const SamplePackTable = (props: {redirect: (page: string, props?: {}) => void}) => {
   const [data, setData] = React.useState<SamplePack[]>([]);
@@ -22,10 +21,6 @@ export const SamplePackTable = (props: {redirect: (page: string, props?: {}) => 
     });
   }
 
-  const playAudioFromFile = (filePath: string) => {
-    const audio = new Audio("file://" + filePath);
-    audio.play();
-  }
 
   const columns: GridColDef[] = [
     { field: 'name', headerName: 'Sample Pack', width: 150 },
@@ -53,6 +48,9 @@ export const SamplePackTable = (props: {redirect: (page: string, props?: {}) => 
           <div>
             <button className="button-link">
               <ModeEditIcon />
+            </button>
+            <button className="button-link" onClick={async () => {await SamplePackAPI.delete(params.row.sample_pack_id); init()}}>
+              <DeleteIcon />
             </button>
           </div>
         );

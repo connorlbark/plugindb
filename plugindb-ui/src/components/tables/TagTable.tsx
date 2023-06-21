@@ -42,7 +42,7 @@ export const TagTable = (props: {redirect: (page: string, props?: {}) => void}) 
             <button className="button-link" onClick={() => {}}>
               <ModeEditIcon />
             </button>
-            <button className="button-link" onClick={async () => {await TagAPI.delete(params.row.tag_id); init()}}>
+            <button className="button-link" onClick={async () => {await TagAPI.delete(params.row.tag); init()}}>
               <DeleteIcon />
             </button>
           </div>

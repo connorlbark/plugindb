@@ -10,6 +10,7 @@ import { TagChip } from '../TagChip';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 //import { createSamplePageName } from '../../pages/CreateSample';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export const SampleTable = (props: {redirect: (page: string, props?: {}) => void}) => {
   const [data, setData] = React.useState<Sample[]>([]);
@@ -44,6 +45,9 @@ export const SampleTable = (props: {redirect: (page: string, props?: {}) => void
       field: 'audio', 
       headerName: '', 
       width: 70,
+      disableExport: true,
+      sortable: false,
+      filterable: false,
       renderCell: (params) => {
         return (
           <button className="button-link" onClick={() => playAudioFromFile(params.row.filepath)}>
@@ -92,6 +96,9 @@ export const SampleTable = (props: {redirect: (page: string, props?: {}) => void
           <div>
             <button className="button-link">
               <ModeEditIcon />
+            </button>
+            <button className="button-link" onClick={async () => {await SampleAPI.delete(params.row.sample_id); init()}}>
+              <DeleteIcon />
             </button>
           </div>
         );
