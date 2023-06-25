@@ -3,6 +3,7 @@ import { SamplePack } from "../../types";
 import { SamplePackAPI } from "../../utils/service";
 import { samplePackPageName } from "../../pages/SamplePacks";
 import { Input, InputLabel, Button} from "@mui/material";
+import { toast } from "react-hot-toast";
 
 export const SamplePackForm = (props: { initialSamplePack?: SamplePack | null, redirect: (page: string, props?: {}) => void }) => {
 
@@ -20,6 +21,11 @@ export const SamplePackForm = (props: { initialSamplePack?: SamplePack | null, r
 
 
   const submit = async () => {
+    if (sample_pack.name === "") {
+      toast.error("Name is a required field");
+      return;
+    }
+
     if (isEdit) {
       await SamplePackAPI.update(sample_pack);
     } else {

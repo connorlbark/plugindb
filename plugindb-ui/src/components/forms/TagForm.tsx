@@ -4,6 +4,7 @@ import { TagAPI } from "../../utils/service";
 import { tagPageName } from "../../pages/Tags";
 import { Input, InputLabel, Button} from "@mui/material";
 import { Circle } from '@uiw/react-color';
+import { toast } from "react-hot-toast";
 
 const palette = [
   '#000000',
@@ -39,6 +40,16 @@ export const TagForm = (props: { initialTag?: Tag | null, redirect: (page: strin
 
 
   const submit = async () => {
+    if (tag.tag === "") {
+      toast.error("Tag is a required field.");
+      return;
+    }
+
+    if (tag.color === "") {
+      toast.error("Please select a color.");
+      return;
+    }
+
     await TagAPI.upsert(tag);
 
     props.redirect(tagPageName)

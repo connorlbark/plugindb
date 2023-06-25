@@ -5,6 +5,7 @@ import { SampleAPI, TagAPI } from "../../utils/service";
 import { TagChip } from "../TagChip";
 import { samplePageName } from "../../pages/Samples";
 import { Input, InputLabel, Button } from "@mui/material";
+import { totalmem } from "os";
 
 export const SampleForm = (props: { initialSample?: Sample | null, redirect: (page: string, props?: {}) => void }) => {
 
@@ -40,13 +41,34 @@ export const SampleForm = (props: { initialSample?: Sample | null, redirect: (pa
   }
 
   const submit = async () => {
-    if (isEdit) {
-      await SampleAPI.update(sample);
-    } else {
-      await SampleAPI.create(sample);
+
+    if (sample.filepath === "") {
+      toast.error("File is a required field.");
+      return;
     }
 
-    props.redirect(samplePageName)
+    if (isEdit) {
+      SampleAPI.update(sample).then(() => {
+        props.redirect(samplePageName)
+      }).catch((e) => {
+        if (e.response.status === 404) {
+          toast.error('Sample pack does not exist.')
+        } else {
+          throw e;
+        }
+      });
+    } else {
+      await SampleAPI.create(sample).then(() => {
+        props.redirect(samplePageName)
+      }).catch((e) => {
+        if (e.response.status === 404) {
+          toast.error('Sample pack does not exist.')
+        } else {
+          throw e;
+        }
+      });
+    }
+
   }
 
   return (
@@ -58,8 +80,14 @@ export const SampleForm = (props: { initialSample?: Sample | null, redirect: (pa
       </div>
 
       <div>
-        <InputLabel style={{marginRight: 10}}>Descrption</InputLabel>
+        <InputLabel style={{marginRight: 10}}>Description</InputLabel>
         <Input disabled={isEdit} type="textbox" value={sample.description} onChange={(e) => updateSample({description: e.target.value})}/>
+      </div>
+
+
+      <div>
+        <InputLabel style={{marginRight: 10}}>Sample Pack</InputLabel>
+        <Input disabled={isEdit} type="textbox" value={sample.sample_pack_name} onChange={(e) => updateSample({sample_pack_name: e.target.value})}/>
       </div>
       
       <div style={{ marginBottom: 10 }}>

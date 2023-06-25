@@ -11,6 +11,7 @@ import TagFormPage, { tagFormPageName } from "./pages/TagForm";
 import SampleFormPage, { sampleFormPageName } from "./pages/SampleForm";
 import SamplePackFormPage, { samplePackFormPageName } from "./pages/SamplePackForm";
 import PresetFormPage, { presetFormPageName } from "./pages/PresetForm";
+import { Toaster } from "react-hot-toast";
 
 const pages = [
   {
@@ -94,6 +95,8 @@ function App() {
       />
 
       {React.createElement(page.component, {...page.props, ...{redirect: redirect}})}
+
+      <Toaster position="bottom-right"/>
     </div>
   );
 }

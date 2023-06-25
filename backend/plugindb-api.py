@@ -301,7 +301,8 @@ def create_sample():
         cnx.commit()
         return "Created", 200
     except pymysql.Error as e:
-        print(e)
+        if (e.args[0] == 1644):
+            return "Could not find sample pack", 404
         cnx.rollback()
         return "Database error", 500
 
@@ -329,7 +330,10 @@ def create_preset():
         cnx.commit()
         return "Created", 200
     except pymysql.Error as e:
-        print(e)
+
+        if (e.args[0] == 1644):
+            return "Could not find preset", 404
+
         cnx.rollback()
         return "Database error", 500
 

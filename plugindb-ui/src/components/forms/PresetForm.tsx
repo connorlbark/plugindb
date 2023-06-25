@@ -39,13 +39,39 @@ export const PresetForm = (props: { initialPreset?: Preset | null, redirect: (pa
   }
 
   const submit = async () => {
-    if (isEdit) {
-      await PresetAPI.update(preset);
-    } else {
-      await PresetAPI.create(preset);
+
+    if (preset.name === '') {
+      toast.error("Name is a required field.");
+      return;
     }
 
-    props.redirect(presetPageName)
+    if (preset.plugin_name === "") {
+      toast.error("Plugin is a required field.");
+      return;
+    }
+
+    if (isEdit) {
+      PresetAPI.update(preset).then(() => {
+        props.redirect(presetPageName);
+      }).catch((e) => {
+        if (e.response.status === 404) {
+          toast.error('Plugin does not exist.')
+        } else {
+          throw e;
+        }
+      });
+    } else {
+      PresetAPI.create(preset).then(() => {
+        props.redirect(presetPageName);
+      }).catch((e) => {
+        if (e.response.status === 404) {
+          toast.error('Plugin does not exist.')
+        } else {
+          throw e;
+        }
+      });
+    }
+
   }
 
   return (

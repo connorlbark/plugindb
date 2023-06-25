@@ -42,6 +42,11 @@ export const PluginForm = (props: { initialPlugin?: MusicPlugin | null, redirect
     if (isEdit) {
       await PluginAPI.update(plugin);
     } else {
+      if (plugin.name === "") {
+        toast.error("Name is a required field.")
+        return;
+      }
+
       await PluginAPI.create(plugin);
     }
 
